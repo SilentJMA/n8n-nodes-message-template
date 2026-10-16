@@ -1,0 +1,23 @@
+{
+	"node": "n8n-nodes-message-template.messageTemplate",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": [
+		"Data & Storage"
+	],
+	"resources": {
+		"primaryDocumentation": [
+			{
+				"url": "https://github.com/SilentJMA/n8n-nodes-message-template#readme"
+			}
+		]
+	},
+	"alias": [
+		"template",
+		"message",
+		"text",
+		"payload",
+		"render",
+		"concatenate"
+	]
+}

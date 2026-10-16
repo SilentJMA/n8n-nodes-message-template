@@ -1,0 +1,62 @@
+{
+  "name": "n8n-nodes-message-template",
+  "version": "0.1.0",
+  "description": "n8n community node that renders text, JSON, XML or file content from an expression template, per item or combined across all items.",
+  "keywords": [
+    "n8n-community-node-package",
+    "n8n",
+    "template",
+    "message",
+    "payload",
+    "xml",
+    "json",
+    "hl7"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/SilentJMA/n8n-nodes-message-template#readme",
+  "bugs": {
+    "url": "https://github.com/SilentJMA/n8n-nodes-message-template/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SilentJMA/n8n-nodes-message-template.git"
+  },
+  "author": {
+    "name": "SilentJMA",
+    "email": "kilwanitro@gmail.com"
+  },
+  "engines": {
+    "node": ">=20.15"
+  },
+  "scripts": {
+    "build": "n8n-node build",
+    "build:watch": "tsc --watch",
+    "dev": "n8n-node dev",
+    "lint": "n8n-node lint",
+    "lint:fix": "n8n-node lint --fix",
+    "test": "n8n-node build && node --test test/",
+    "prepublishOnly": "n8n-node prerelease",
+    "release": "n8n-node release"
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.tsbuildinfo"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "strict": true,
+    "credentials": [],
+    "nodes": [
+      "dist/nodes/MessageTemplate/MessageTemplate.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@n8n/node-cli": "*",
+    "eslint": "9.32.0",
+    "prettier": "3.6.2",
+    "typescript": "5.9.2"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  }
+}

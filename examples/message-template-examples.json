@@ -1,0 +1,125 @@
+{
+  "name": "Message Template examples",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "521c629c-92eb-58a9-980f-1a38d9b1559a",
+      "name": "When clicking 'Execute workflow'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  { json: { id: 'A1', name: 'Ann & Co', total: 10.5, currency: 'EUR' } },\n  { json: { id: 'B2', name: 'Bo \"the\" Builder', total: 7, currency: 'USD' } },\n];"
+      },
+      "id": "cf08510b-b818-5bae-b30e-57343e93ab5a",
+      "name": "Sample orders",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "template": "={\n  \"orderId\": {{ JSON.stringify($json.id) }},\n  \"customer\": {{ JSON.stringify($json.name) }},\n  \"amount\": {{ $json.total }},\n  \"position\": {{ $itemIndex + 1 }}\n}",
+        "outputFormat": "json"
+      },
+      "id": "1246c9e0-53a2-59ec-b3cc-e621137b4b32",
+      "name": "JSON payload per order",
+      "type": "n8n-nodes-message-template.messageTemplate",
+      "typeVersion": 1,
+      "position": [
+        480,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "template": "=<order id=\"{{ $json.id }}\">\n  <customer>{{ $json.name.replaceAll('&', '&amp;').replaceAll('<', '&lt;') }}</customer>\n  <total currency=\"{{ $json.currency }}\">{{ $json.total }}</total>\n</order>",
+        "header": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<orders>",
+        "separator": "\n",
+        "footer": "</orders>",
+        "outputFormat": "xml",
+        "xmlOptions": {
+          "formattedXmlField": "xml",
+          "alwaysArray": false
+        }
+      },
+      "id": "2f1bfa25-e022-51cc-b4d6-5bc98a7ecd0e",
+      "name": "XML document of all orders",
+      "type": "n8n-nodes-message-template.messageTemplate",
+      "typeVersion": 1,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "template": "={{ $json.id }},{{ JSON.stringify($json.name) }},{{ $json.total }}",
+        "header": "id,name,total\n",
+        "separator": "\n",
+        "outputFormat": "binary",
+        "fileName": "orders.csv",
+        "mimeType": "text/csv",
+        "options": {
+          "lineEnding": "crlf"
+        }
+      },
+      "id": "5614ea61-dd65-525f-bc95-f04a56940231",
+      "name": "CSV file",
+      "type": "n8n-nodes-message-template.messageTemplate",
+      "typeVersion": 1,
+      "position": [
+        480,
+        500
+      ]
+    }
+  ],
+  "connections": {
+    "When clicking 'Execute workflow'": {
+      "main": [
+        [
+          {
+            "node": "Sample orders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sample orders": {
+      "main": [
+        [
+          {
+            "node": "JSON payload per order",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "XML document of all orders",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "CSV file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

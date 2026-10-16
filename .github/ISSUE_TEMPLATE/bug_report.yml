@@ -1,0 +1,31 @@
+name: Bug report
+description: Something in the Message Template node does not work as expected
+labels: [bug]
+body:
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: Node package version and n8n version
+      placeholder: n8n-nodes-message-template 0.1.0, n8n 2.x
+    validations:
+      required: true
+  - type: textarea
+    id: config
+    attributes:
+      label: Node configuration
+      description: Mode, Output Format, the template, and any options you set. Pasting the node JSON (select the node, Ctrl/Cmd+C) is ideal.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected output
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual output or error
+    validations:
+      required: true
