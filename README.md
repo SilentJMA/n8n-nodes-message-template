@@ -132,6 +132,12 @@ The rendered string is stored as a binary file, ready for **Write Files to Disk*
 
 ## Examples
 
+
+<img width="1337" height="417" alt="image" src="https://github.com/user-attachments/assets/d974ce42-1471-4d58-a3ea-5f71a0b4f448" />
+
+<img width="964" height="670" alt="image" src="https://github.com/user-attachments/assets/2dea2966-7939-45d6-be76-25ac8cf07ce4" />
+
+
 ### API request body per item
 
 Output Format **JSON**:
