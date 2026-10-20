@@ -64,6 +64,32 @@ test('JSON array output becomes one item per element', async () => {
 	assert.deepEqual(out.map((o) => o.json), [{ a: 1 }, { a: 2 }, { data: 3 }]);
 });
 
+test('JSON output accepts a JavaScript object literal', async () => {
+	const template = `{
+  OrderID: 'A1',
+  Amount: '129.50',
+  Items: [ { SKU: 'P-1', Qty: '2' }, { SKU: "it's", Qty: 1 } ], // comment
+  internalNote: 'ignored by auto-map',
+}`;
+	const [out] = await run({ mode: 'eachItem', outputFormat: 'json', template }, [items[0]]);
+	assert.deepEqual(out[0].json, {
+		OrderID: 'A1',
+		Amount: '129.50',
+		Items: [{ SKU: 'P-1', Qty: '2' }, { SKU: "it's", Qty: 1 }],
+		internalNote: 'ignored by auto-map',
+	});
+});
+
+test('lenient JSON does not evaluate code or pollute prototypes', async () => {
+	await assert.rejects(
+		run({ mode: 'eachItem', outputFormat: 'json', template: '{a: process.exit(1)}' }, [items[0]]),
+		/not valid JSON/,
+	);
+	const [out] = await run({ mode: 'eachItem', outputFormat: 'json', template: "{__proto__: {x: 1}, a: 1,}" }, [items[0]]);
+	assert.equal({}.x, undefined);
+	assert.equal(out[0].json.a, 1);
+});
+
 test('invalid JSON gives a helpful error', async () => {
 	await assert.rejects(
 		run({ mode: 'eachItem', outputFormat: 'json', template: '{"a": oops}' }, [items[0]]),

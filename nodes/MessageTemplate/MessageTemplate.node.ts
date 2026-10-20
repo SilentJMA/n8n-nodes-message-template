@@ -7,7 +7,8 @@ import type {
 } from 'n8n-workflow';
 import { NodeConnectionTypes, NodeOperationError } from 'n8n-workflow';
 
-import { formatXml, parseXml, xmlToJson, type XmlToJsonOptions } from './xml';
+import { parseLenientJson } from './lenientJson';
+import { formatXml,parseXml, xmlToJson, type XmlToJsonOptions } from './xml';
 
 type Mode = 'eachItem' | 'combine';
 type OutputFormat = 'text' | 'json' | 'xml' | 'binary';
@@ -341,10 +342,15 @@ async function buildOutput(
 		try {
 			parsed = JSON.parse(text);
 		} catch (error) {
-			throw new NodeOperationError(ctx.getNode(), `The rendered template is not valid JSON`, {
-				itemIndex,
-				description: `${error.message}. Insert string values with {{ JSON.stringify($json.field) }} so they are quoted and escaped correctly.`,
-			});
+			try {
+				// Accept JavaScript object literals (unquoted keys, single quotes, trailing commas)
+				parsed = parseLenientJson(text);
+			} catch {
+				throw new NodeOperationError(ctx.getNode(), `The rendered template is not valid JSON`, {
+					itemIndex,
+					description: `${error.message}. Insert string values with {{ JSON.stringify($json.field) }} so they are quoted and escaped correctly.`,
+				});
+			}
 		}
 		const entries = Array.isArray(parsed) ? parsed : [parsed];
 		return entries.map((entry) => ({
@@ -377,7 +383,12 @@ async function buildOutput(
 		};
 		const json = xmlToJson(document, options) as IDataObject;
 		if (xmlOptions.formattedXmlField) {
-			json[xmlOptions.formattedXmlField as string] = formatXml(document);
+			Object.defineProperty(json, xmlOptions.formattedXmlField as string, {
+				value: formatXml(document),
+				enumerable: true,
+				writable: true,
+				configurable: true,
+			});
 		}
 		return [{ json, pairedItem }];
 	}

@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-message-template",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "n8n community node that renders text, JSON, XML or file content from an expression template, per item or combined across all items.",
   "keywords": [
     "n8n-community-node-package",

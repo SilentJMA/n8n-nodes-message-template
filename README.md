@@ -96,6 +96,8 @@ The rendered string is written to one field:
 
 The rendered string is parsed and becomes the output item. A JSON **array** produces one output item per element, and a primitive value is wrapped as `{ "data": value }`. If parsing fails, the error tells you what went wrong and how to fix it.
 
+Strict JSON is tried first. If that fails, the node also accepts JavaScript object literals, such as data copied from the n8n output panel or a `console.log`: unquoted keys, single-quoted strings, trailing commas and comments. Nothing is evaluated, so only plain data is accepted. Values from expressions should still go through `JSON.stringify` so they are escaped correctly.
+
 ### XML
 
 The rendered string is parsed and converted to structured data you can browse and drag fields from in the output panel, just like JSON. It uses the same `$` (attributes) and `_` (text) keys as n8n's built-in XML node:
@@ -204,6 +206,13 @@ PID|1||{{ $json.mrn }}||{{ $json.lastName }}^{{ $json.firstName }}
 - **Expressions that return objects** are converted to JSON text automatically.
 - **Combine mode** reads Header, Separator, Footer and the options from the first item.
 - Turn on **Settings → On Error → Continue** to output failed items as `{ "error": "…" }` instead of stopping the workflow.
+
+## Security
+
+- **No runtime dependencies**: the package is only the compiled node.
+- **Safe XML parsing**: DTDs and entity declarations are ignored (no XXE, no entity expansion), and nesting deeper than 1,000 levels is rejected.
+- **No prototype pollution**: names such as `__proto__` in XML or JSON are plain data.
+- **No code execution**: lenient JSON is parsed by a small hand-written parser, never evaluated. Template expressions are evaluated by n8n itself.
 
 ## Compatibility
 
